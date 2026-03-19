@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MANÁ FM | Alimentando tu Espíritu</title>
+    <title>MANÁ FM | ALIMENTANDO TU ESPIRITU</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -19,12 +19,12 @@
         body, html {
             width: 100%; min-height: 100vh;
             background-color: var(--bg-dark);
-            font-family: 'Segoe UI', 'Arial Black', sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             color: white; overflow-x: hidden;
             display: flex; flex-direction: column;
         }
 
-        #particleCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+        #particleCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
 
         .main-wrapper {
             flex: 1; display: flex; position: relative; z-index: 10;
@@ -32,64 +32,48 @@
             flex-direction: column; align-items: center; justify-content: center; gap: 30px;
         }
 
-        /* --- VISUALIZADOR --- */
+        /* --- CONTENEDOR VISUALIZADOR --- */
         .visualizer-container {
             position: relative;
             display: flex; justify-content: center; align-items: center;
-            width: clamp(280px, 45vh, 520px);
-            height: clamp(280px, 45vh, 520px);
+            width: clamp(280px, 45vh, 500px);
+            height: clamp(280px, 45vh, 500px);
         }
 
         #radialCanvas {
             position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: 150%; height: 150%; 
-            pointer-events: none;
-            display: none; 
+            width: 160%; height: 160%; 
+            display: none; /* Se activa en PC vía JS */
+            z-index: 5;
         }
 
         .cover-art {
             width: 100%; height: 100%;
-            border-radius: 50%; /* Carátula circular */
+            border-radius: 50%;
             border: 6px solid var(--neon-gold);
             box-shadow: 0 0 50px var(--neon-shadow);
             overflow: hidden;
-            background: #111;
             z-index: 10;
+            background: #111;
         }
         .cover-art img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* --- CONTENIDO --- */
-        .content-section {
-            flex: 1.2; display: flex; flex-direction: column;
-            align-items: center; text-align: center; justify-content: center;
-        }
-
+        /* --- INFO --- */
         .info h1 { 
             color: var(--neon-gold); font-weight: 900;
             font-size: clamp(2.5rem, 8vw, 6.5rem); 
             letter-spacing: clamp(5px, 1.2vw, 15px);
             text-shadow: 0 0 35px var(--neon-shadow);
-            line-height: 1.1; margin-bottom: 5px;
-            white-space: nowrap; /* Fuerza una sola línea en PC */
+            white-space: nowrap;
             text-transform: uppercase;
         }
 
         .info p {
             opacity: 0.8; font-size: clamp(0.7rem, 1.2vw, 1.1rem);
-            letter-spacing: 8px; text-transform: uppercase;
-            font-weight: bold; color: var(--neon-gold); margin-bottom: 25px;
+            letter-spacing: 8px; color: var(--neon-gold); margin-bottom: 25px;
         }
 
-        #linearSpectrum {
-            display: flex; gap: 4px; height: 60px; margin-bottom: 30px; align-items: center;
-        }
-        .bar {
-            width: 6px; background: var(--neon-gold); border-radius: 20px;
-            box-shadow: 0 0 10px var(--neon-glow); transition: height 0.1s ease;
-        }
-
+        /* CONTROLES */
         .controls {
             display: flex; gap: 30px; align-items: center;
             background: var(--glass); padding: 15px 45px;
@@ -97,10 +81,10 @@
             backdrop-filter: blur(10px); margin-bottom: 30px;
         }
 
-        .btn { background: none; border: none; color: var(--neon-gold); cursor: pointer; transition: 0.3s; font-size: 0.9rem; font-weight: 900; }
+        .btn { background: none; border: none; color: var(--neon-gold); cursor: pointer; font-weight: 900; }
         .btn-play {
-            width: 75px; height: 75px; background: var(--neon-gold); color: black;
-            border-radius: 50%; font-size: 1.8rem; box-shadow: 0 0 30px var(--neon-shadow);
+            width: 70px; height: 70px; background: var(--neon-gold); color: black;
+            border-radius: 50%; font-size: 1.5rem; box-shadow: 0 0 30px var(--neon-shadow);
         }
 
         .social-row { display: flex; gap: 20px; }
@@ -109,17 +93,14 @@
             color: var(--neon-gold); border-radius: 50%; border: 1px solid rgba(255, 204, 51, 0.2);
             text-decoration: none; transition: 0.3s;
         }
-        .social-link:hover { background: var(--neon-gold); color: black; transform: translateY(-3px); }
 
-        footer { width: 100%; text-align: center; padding: 25px; font-size: 0.75rem; letter-spacing: 5px; opacity: 0.5; color: var(--neon-gold); }
+        footer { width: 100%; text-align: center; padding: 20px; font-size: 0.7rem; opacity: 0.5; color: var(--neon-gold); letter-spacing: 2px; }
 
-        /* --- MODO PC --- */
+        /* MODO PC */
         @media (min-width: 1024px) {
-            .main-wrapper { flex-direction: row; text-align: left; gap: 100px; padding: 0 80px; }
+            .main-wrapper { flex-direction: row; gap: 100px; }
+            #radialCanvas { display: block; }
             .content-section { align-items: flex-start; text-align: left; }
-            #linearSpectrum { display: none; } 
-            #radialCanvas { display: block; }  
-            .cover-section { flex: 0.8; }
         }
     </style>
 </head>
@@ -128,22 +109,18 @@
     <canvas id="particleCanvas"></canvas>
     
     <div class="main-wrapper">
-        <div class="cover-section">
-            <div class="visualizer-container">
-                <canvas id="radialCanvas"></canvas>
-                <div class="cover-art">
-                    <img src="https://i.ibb.co/LDDxrrkg/MANA-iso.png" alt="MANÁ FM">
-                </div>
+        <div class="visualizer-container">
+            <canvas id="radialCanvas"></canvas>
+            <div class="cover-art">
+                <img src="https://i.ibb.co/LDDxrrkg/MANA-iso.png" alt="MANÁ FM">
             </div>
         </div>
 
         <div class="content-section">
             <div class="info">
                 <h1>MANÁ FM</h1>
-                <p>ALIMENTANDO TU Espíritu</p>
+                <p>ALIMENTANDO TU VIDA</p>
             </div>
-
-            <div id="linearSpectrum"></div>
 
             <div class="controls">
                 <button class="btn" onclick="v(-0.1)">VOL －</button>
@@ -155,115 +132,87 @@
                 <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
                 <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
                 <a href="#" class="social-link"><i class="fab fa-whatsapp"></i></a>
-                <a href="#" class="social-link"><i class="fab fa-tiktok"></i></a>
             </div>
         </div>
     </div>
 
-    <footer>&copy; 2026 AC MEDIA BROADCAST • MANÁ FM LIVE</footer>
+    <footer>&copy; 2026 AC MEDIA BROADCAST • </footer>
 
     <audio id="stream" crossorigin="anonymous" src="https://stream-176.zeno.fm/7ebzmp31rxhvv"></audio>
 
     <script>
-        // --- PARTÍCULAS ---
-        const canvas = document.getElementById('particleCanvas');
-        const ctx = canvas.getContext('2d');
+        // --- Partículas ---
+        const pCanv = document.getElementById('particleCanvas');
+        const pCtx = pCanv.getContext('2d');
         let particles = [];
-        function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-        window.onresize = resize; resize();
+        function res() { pCanv.width = window.innerWidth; pCanv.height = window.innerHeight; }
+        window.onresize = res; res();
 
-        class Particle {
+        class P {
             constructor() { this.reset(); }
             reset() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 2;
-                this.speed = Math.random() * 0.3 + 0.1;
-                this.opacity = Math.random() * 0.5;
+                this.x = Math.random() * pCanv.width;
+                this.y = Math.random() * pCanv.height;
+                this.s = Math.random() * 2;
+                this.v = Math.random() * 0.3 + 0.1;
             }
-            update() { this.y -= this.speed; if (this.y < 0) this.reset(); }
-            draw() {
-                ctx.fillStyle = `rgba(255, 204, 51, ${this.opacity})`;
-                ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill();
-            }
+            up() { this.y -= this.v; if(this.y<0) this.reset(); }
+            dr() { pCtx.fillStyle = "rgba(255,204,51,0.3)"; pCtx.beginPath(); pCtx.arc(this.x,this.y,this.s,0,Math.PI*2); pCtx.fill(); }
         }
-        for(let i=0; i<80; i++) particles.push(new Particle());
+        for(let i=0; i<60; i++) particles.push(new P());
 
-        // --- AUDIO ---
+        // --- Audio y Visualizador Radial ---
         const audio = document.getElementById('stream');
         const playBtn = document.getElementById('playBtn');
-        const radialCanvas = document.getElementById('radialCanvas');
-        const rCtx = radialCanvas.getContext('2d');
-        const linearContainer = document.getElementById('linearSpectrum');
-        
-        let audioCtx, analyser, source, dataArray;
-        let isInit = false;
-
-        // Barras móvil
-        for (let i = 0; i < 20; i++) {
-            const b = document.createElement('div');
-            b.className = 'bar';
-            linearContainer.appendChild(b);
-        }
-        const linearBars = document.querySelectorAll('.bar');
-
-        function initAudio() {
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            analyser = audioCtx.createAnalyser();
-            source = audioCtx.createMediaElementSource(audio);
-            source.connect(analyser);
-            analyser.connect(audioCtx.destination);
-            analyser.fftSize = 256;
-            dataArray = new Uint8Array(analyser.frequencyBinCount);
-            isInit = true;
-        }
+        const rCanv = document.getElementById('radialCanvas');
+        const rCtx = rCanv.getContext('2d');
+        let aCtx, analyser, src, data;
+        let init = false;
 
         function render() {
             requestAnimationFrame(render);
-            ctx.clearRect(0,0,canvas.width,canvas.height);
-            particles.forEach(p => { p.update(); p.draw(); });
+            pCtx.clearRect(0,0,pCanv.width,pCanv.height);
+            particles.forEach(p=>{ p.up(); p.dr(); });
 
-            if (!isInit || audio.paused) return;
-            analyser.getByteFrequencyData(dataArray);
+            if(!init || audio.paused || window.innerWidth < 1024) return;
 
-            if (window.innerWidth >= 1024) {
-                radialCanvas.width = radialCanvas.offsetWidth;
-                radialCanvas.height = radialCanvas.offsetHeight;
-                const cX = radialCanvas.width / 2;
-                const cY = radialCanvas.height / 2;
-                const radius = radialCanvas.width * 0.34;
-                const bars = 100;
+            rCanv.width = rCanv.offsetWidth;
+            rCanv.height = rCanv.offsetHeight;
+            analyser.getByteFrequencyData(data);
+            
+            const c = rCanv.width/2;
+            const rad = rCanv.width * 0.32;
+            rCtx.clearRect(0,0,rCanv.width,rCanv.height);
 
-                rCtx.clearRect(0, 0, radialCanvas.width, radialCanvas.height);
-                for (let i = 0; i < bars; i++) {
-                    const angle = (i * 2 * Math.PI) / bars;
-                    const val = dataArray[i % 60];
-                    const bH = (val / 255) * 65;
-                    rCtx.strokeStyle = `rgba(255, 204, 51, ${0.4 + val/255})`;
-                    rCtx.lineWidth = 3;
-                    rCtx.lineCap = 'round';
-                    rCtx.shadowBlur = 8;
-                    rCtx.shadowColor = '#ffae00';
-                    rCtx.beginPath();
-                    rCtx.moveTo(cX + Math.cos(angle) * radius, cY + Math.sin(angle) * radius);
-                    rCtx.lineTo(cX + Math.cos(angle) * (radius + bH), cY + Math.sin(angle) * (radius + bH));
-                    rCtx.stroke();
-                }
-            } else {
-                linearBars.forEach((bar, i) => {
-                    const val = dataArray[i * 4];
-                    bar.style.height = (val / 255) * 60 + 'px';
-                });
+            for(let i=0; i<100; i++) {
+                const ang = (i * 2 * Math.PI) / 100;
+                const h = (data[i%60]/255) * 70;
+                rCtx.strokeStyle = `rgba(255,204,51,${0.3 + data[i%60]/255})`;
+                rCtx.lineWidth = 3;
+                rCtx.lineCap = "round";
+                rCtx.beginPath();
+                rCtx.moveTo(c + Math.cos(ang)*rad, c + Math.sin(ang)*rad);
+                rCtx.lineTo(c + Math.cos(ang)*(rad+h), c + Math.sin(ang)*(rad+h));
+                rCtx.stroke();
             }
         }
 
         playBtn.onclick = () => {
-            if (!isInit) initAudio();
-            if (audio.paused) {
-                audioCtx.resume(); audio.play();
+            if(!init) {
+                aCtx = new (window.AudioContext || window.webkitAudioContext)();
+                analyser = aCtx.createAnalyser();
+                src = aCtx.createMediaElementSource(audio);
+                src.connect(analyser);
+                analyser.connect(aCtx.destination);
+                data = new Uint8Array(analyser.frequencyBinCount);
+                init = true;
+            }
+            if(audio.paused) {
+                aCtx.resume(); audio.play();
                 playBtn.innerHTML = '<i class="fas fa-pause"></i>';
             } else {
-                audio.pause(); playBtn.innerHTML = '<i class="fas fa-play"></i>';
+                audio.pause();
+                playBtn.innerHTML = '<i class="fas fa-play"></i>';
             }
         };
 
