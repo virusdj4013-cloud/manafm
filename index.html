@@ -28,79 +28,93 @@
 
         .main-wrapper {
             flex: 1; display: flex; position: relative; z-index: 10;
-            width: 100%; max-width: 1400px; margin: 0 auto; padding: 40px 20px;
-            flex-direction: column; align-items: center; justify-content: center; gap: 30px;
+            width: 100%; max-width: 1200px; margin: 0 auto; padding: 40px 20px;
+            flex-direction: column; align-items: center; justify-content: center; gap: 40px;
         }
 
-        /* --- CONTENEDOR VISUALIZADOR --- */
+        /* --- VISUALIZADOR Y CARATULA --- */
         .visualizer-container {
             position: relative;
             display: flex; justify-content: center; align-items: center;
-            width: clamp(280px, 45vh, 500px);
-            height: clamp(280px, 45vh, 500px);
+            width: clamp(260px, 35vh, 420px);
+            height: clamp(260px, 35vh, 420px);
         }
 
         #radialCanvas {
             position: absolute;
-            width: 160%; height: 160%; 
-            display: none; /* Se activa en PC vía JS */
-            z-index: 5;
+            width: 150%; height: 150%; 
+            display: none; z-index: 5;
         }
 
         .cover-art {
             width: 100%; height: 100%;
             border-radius: 50%;
-            border: 6px solid var(--neon-gold);
-            box-shadow: 0 0 50px var(--neon-shadow);
+            border: 5px solid var(--neon-gold);
+            box-shadow: 0 0 30px var(--neon-shadow);
             overflow: hidden;
             z-index: 10;
             background: #111;
+            transition: transform 0.1s ease; /* Respuesta rápida */
         }
         .cover-art img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* --- INFO --- */
+        /* --- SECCIÓN DE TEXTO Y CONTROLES --- */
+        .content-section { 
+            display: flex; flex-direction: column; 
+            align-items: center; text-align: center; 
+        }
+
         .info h1 { 
             color: var(--neon-gold); font-weight: 900;
-            font-size: clamp(2.5rem, 8vw, 6.5rem); 
-            letter-spacing: clamp(5px, 1.2vw, 15px);
-            text-shadow: 0 0 35px var(--neon-shadow);
-            white-space: nowrap;
+            font-size: clamp(2.2rem, 7vw, 5rem); 
+            letter-spacing: clamp(4px, 1vw, 10px);
+            text-shadow: 0 0 25px var(--neon-shadow);
             text-transform: uppercase;
+            line-height: 1.1;
         }
 
         .info p {
-            opacity: 0.8; font-size: clamp(0.7rem, 1.2vw, 1.1rem);
-            letter-spacing: 8px; color: var(--neon-gold); margin-bottom: 25px;
+            opacity: 0.8; font-size: clamp(0.7rem, 1.2vw, 0.9rem);
+            letter-spacing: 5px; color: var(--neon-gold); margin: 10px 0 25px 0;
         }
 
-        /* CONTROLES */
         .controls {
-            display: flex; gap: 30px; align-items: center;
-            background: var(--glass); padding: 15px 45px;
+            display: flex; gap: 20px; align-items: center;
+            background: var(--glass); padding: 12px 30px;
             border-radius: 100px; border: 1px solid rgba(255, 204, 51, 0.2);
-            backdrop-filter: blur(10px); margin-bottom: 30px;
+            backdrop-filter: blur(10px); margin-bottom: 25px;
         }
 
-        .btn { background: none; border: none; color: var(--neon-gold); cursor: pointer; font-weight: 900; }
+        .btn { background: none; border: none; color: var(--neon-gold); cursor: pointer; font-weight: 800; font-size: 0.75rem; }
+        
         .btn-play {
-            width: 70px; height: 70px; background: var(--neon-gold); color: black;
-            border-radius: 50%; font-size: 1.5rem; box-shadow: 0 0 30px var(--neon-shadow);
+            width: 60px; height: 60px; background: var(--neon-gold); color: black;
+            border-radius: 50%; font-size: 1.3rem; 
+            box-shadow: 0 0 20px var(--neon-shadow);
+            display: flex; align-items: center; justify-content: center;
         }
 
-        .social-row { display: flex; gap: 20px; }
+        .social-row { display: flex; gap: 15px; }
         .social-link {
-            width: 45px; height: 45px; display: flex; align-items: center; justify-content: center;
-            color: var(--neon-gold); border-radius: 50%; border: 1px solid rgba(255, 204, 51, 0.2);
+            width: 38px; height: 38px; display: flex; align-items: center; justify-content: center;
+            color: var(--neon-gold); border-radius: 50%; border: 1px solid rgba(255, 204, 51, 0.15);
             text-decoration: none; transition: 0.3s;
         }
+        .social-link:hover { background: var(--neon-gold); color: black; }
 
-        footer { width: 100%; text-align: center; padding: 20px; font-size: 0.7rem; opacity: 0.5; color: var(--neon-gold); letter-spacing: 2px; }
+        footer { 
+            width: 100%; text-align: center; padding: 20px; 
+            font-size: 0.6rem; opacity: 0.5; color: var(--neon-gold); 
+            letter-spacing: 2px; z-index: 10;
+        }
 
-        /* MODO PC */
+        /* --- AJUSTES PC (CENTRAR CONTROLES CON TÍTULO) --- */
         @media (min-width: 1024px) {
-            .main-wrapper { flex-direction: row; gap: 100px; }
+            .main-wrapper { flex-direction: row; gap: 100px; justify-content: center; }
             #radialCanvas { display: block; }
+            /* Alineamos todo a la izquierda para que visualmente se vea centrado con el bloque de texto */
             .content-section { align-items: flex-start; text-align: left; }
+            .info h1 { margin-left: -4px; } /* Ajuste óptico para el tracking del texto */
         }
     </style>
 </head>
@@ -111,7 +125,7 @@
     <div class="main-wrapper">
         <div class="visualizer-container">
             <canvas id="radialCanvas"></canvas>
-            <div class="cover-art">
+            <div class="cover-art" id="artContainer">
                 <img src="https://i.ibb.co/LDDxrrkg/MANA-iso.png" alt="MANÁ FM">
             </div>
         </div>
@@ -119,7 +133,7 @@
         <div class="content-section">
             <div class="info">
                 <h1>MANÁ FM</h1>
-                <p>ALIMENTANDO TU ESPÍRITU</p>
+                <p>ALIMENTANDO TU ESPIRITU</p>
             </div>
 
             <div class="controls">
@@ -141,11 +155,27 @@
     <audio id="stream" crossorigin="anonymous" src="https://stream-176.zeno.fm/7ebzmp31rxhvv"></audio>
 
     <script>
-        // --- Partículas ---
+        const audio = document.getElementById('stream');
+        const playBtn = document.getElementById('playBtn');
+        const artContainer = document.getElementById('artContainer');
+        const rCanv = document.getElementById('radialCanvas');
+        const rCtx = rCanv.getContext('2d');
         const pCanv = document.getElementById('particleCanvas');
         const pCtx = pCanv.getContext('2d');
+
+        let aCtx, analyser, src, data;
+        let init = false;
         let particles = [];
-        function res() { pCanv.width = window.innerWidth; pCanv.height = window.innerHeight; }
+
+        // --- Partículas ---
+        function res() { 
+            pCanv.width = window.innerWidth; 
+            pCanv.height = window.innerHeight;
+            if(window.innerWidth >= 1024) {
+                rCanv.width = rCanv.offsetWidth;
+                rCanv.height = rCanv.offsetHeight;
+            }
+        }
         window.onresize = res; res();
 
         class P {
@@ -157,55 +187,22 @@
                 this.v = Math.random() * 0.3 + 0.1;
             }
             up() { this.y -= this.v; if(this.y<0) this.reset(); }
-            dr() { pCtx.fillStyle = "rgba(255,204,51,0.3)"; pCtx.beginPath(); pCtx.arc(this.x,this.y,this.s,0,Math.PI*2); pCtx.fill(); }
+            dr() { pCtx.fillStyle = "rgba(255,204,51,0.2)"; pCtx.beginPath(); pCtx.arc(this.x,this.y,this.s,0,Math.PI*2); pCtx.fill(); }
         }
         for(let i=0; i<60; i++) particles.push(new P());
 
-        // --- Audio y Visualizador Radial ---
-        const audio = document.getElementById('stream');
-        const playBtn = document.getElementById('playBtn');
-        const rCanv = document.getElementById('radialCanvas');
-        const rCtx = rCanv.getContext('2d');
-        let aCtx, analyser, src, data;
-        let init = false;
-
-        function render() {
-            requestAnimationFrame(render);
-            pCtx.clearRect(0,0,pCanv.width,pCanv.height);
-            particles.forEach(p=>{ p.up(); p.dr(); });
-
-            if(!init || audio.paused || window.innerWidth < 1024) return;
-
-            rCanv.width = rCanv.offsetWidth;
-            rCanv.height = rCanv.offsetHeight;
-            analyser.getByteFrequencyData(data);
-            
-            const c = rCanv.width/2;
-            const rad = rCanv.width * 0.32;
-            rCtx.clearRect(0,0,rCanv.width,rCanv.height);
-
-            for(let i=0; i<100; i++) {
-                const ang = (i * 2 * Math.PI) / 100;
-                const h = (data[i%60]/255) * 70;
-                rCtx.strokeStyle = `rgba(255,204,51,${0.3 + data[i%60]/255})`;
-                rCtx.lineWidth = 3;
-                rCtx.lineCap = "round";
-                rCtx.beginPath();
-                rCtx.moveTo(c + Math.cos(ang)*rad, c + Math.sin(ang)*rad);
-                rCtx.lineTo(c + Math.cos(ang)*(rad+h), c + Math.sin(ang)*(rad+h));
-                rCtx.stroke();
-            }
-        }
-
+        // --- Lógica Principal ---
         playBtn.onclick = () => {
             if(!init) {
                 aCtx = new (window.AudioContext || window.webkitAudioContext)();
                 analyser = aCtx.createAnalyser();
+                analyser.fftSize = 128; // Menos datos para mayor rendimiento en móvil
                 src = aCtx.createMediaElementSource(audio);
                 src.connect(analyser);
                 analyser.connect(aCtx.destination);
                 data = new Uint8Array(analyser.frequencyBinCount);
                 init = true;
+                res();
             }
             if(audio.paused) {
                 aCtx.resume(); audio.play();
@@ -213,8 +210,46 @@
             } else {
                 audio.pause();
                 playBtn.innerHTML = '<i class="fas fa-play"></i>';
+                artContainer.style.boxShadow = "0 0 30px var(--neon-shadow)";
             }
         };
+
+        function render() {
+            requestAnimationFrame(render);
+            pCtx.clearRect(0,0,pCanv.width,pCanv.height);
+            particles.forEach(p=>{ p.up(); p.dr(); });
+
+            if(!init || audio.paused) return;
+
+            analyser.getByteFrequencyData(data);
+            
+            // --- Brillo dinámico de la carátula (Móvil y PC) ---
+            // Usamos las frecuencias bajas (índice 0-5) para el pulso
+            let sum = 0;
+            for(let i=0; i<5; i++) sum += data[i];
+            let avg = sum / 5;
+            let pulse = (avg / 255) * 60; // Intensidad del brillo
+            artContainer.style.boxShadow = `0 0 ${20 + pulse}px ${pulse > 20 ? 'var(--neon-gold)' : 'var(--neon-shadow)'}`;
+            artContainer.style.transform = `scale(${1 + (pulse/500)})`;
+
+            // --- Visualizador Radial (Solo PC) ---
+            if(window.innerWidth >= 1024) {
+                rCtx.clearRect(0,0,rCanv.width,rCanv.height);
+                const c = rCanv.width/2;
+                const rad = rCanv.width * 0.33;
+                for(let i=0; i<80; i++) {
+                    const ang = (i * 2 * Math.PI) / 80;
+                    const h = (data[i % 40] / 255) * 60;
+                    rCtx.strokeStyle = `rgba(255,204,51,${0.2 + data[i%40]/255})`;
+                    rCtx.lineWidth = 3;
+                    rCtx.lineCap = "round";
+                    rCtx.beginPath();
+                    rCtx.moveTo(c + Math.cos(ang)*rad, c + Math.sin(ang)*rad);
+                    rCtx.lineTo(c + Math.cos(ang)*(rad+h), c + Math.sin(ang)*(rad+h));
+                    rCtx.stroke();
+                }
+            }
+        }
 
         render();
         function v(n) { audio.volume = Math.max(0, Math.min(1, audio.volume + n)); }
