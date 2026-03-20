@@ -7,18 +7,21 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --bg-dark: #000000;
+            --bg-top: #000000;
+            --bg-bottom: #1a0033;
             --neon-gold: #ffcc33;
             --neon-glow: #ffae00;
             --neon-shadow: rgba(255, 174, 0, 0.7);
-            --glass: rgba(255, 255, 255, 0.08);
+            --glass: rgba(255, 255, 255, 0.06);
+            --border-glass: rgba(255, 204, 51, 0.15);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body, html {
             width: 100%; min-height: 100vh;
-            background-color: var(--bg-dark);
+            background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
+            background-attachment: fixed;
             font-family: 'Segoe UI', sans-serif;
             color: white; overflow-x: hidden;
             display: flex; flex-direction: column;
@@ -32,7 +35,6 @@
             flex-direction: column; align-items: center; justify-content: center; gap: 40px;
         }
 
-        /* --- VISUALIZADOR Y CARATULA --- */
         .visualizer-container {
             position: relative;
             display: flex; justify-content: center; align-items: center;
@@ -54,34 +56,36 @@
             overflow: hidden;
             z-index: 10;
             background: #111;
-            transition: transform 0.1s ease; /* Respuesta rápida */
+            transition: transform 0.1s ease;
         }
         .cover-art img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* --- SECCIÓN DE TEXTO Y CONTROLES --- */
         .content-section { 
             display: flex; flex-direction: column; 
             align-items: center; text-align: center; 
         }
 
+        /* TÍTULO EN BLANCO */
         .info h1 { 
-            color: var(--neon-gold); font-weight: 900;
+            color: #ffffff; 
+            font-weight: 900;
             font-size: clamp(2.2rem, 7vw, 5rem); 
             letter-spacing: clamp(4px, 1vw, 10px);
-            text-shadow: 0 0 25px var(--neon-shadow);
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
             text-transform: uppercase;
             line-height: 1.1;
         }
 
         .info p {
-            opacity: 0.8; font-size: clamp(0.7rem, 1.2vw, 0.9rem);
+            opacity: 0.9; font-size: clamp(0.7rem, 1.2vw, 0.9rem);
             letter-spacing: 5px; color: var(--neon-gold); margin: 10px 0 25px 0;
+            text-shadow: 0 0 10px rgba(255, 204, 51, 0.4);
         }
 
         .controls {
             display: flex; gap: 20px; align-items: center;
             background: var(--glass); padding: 12px 30px;
-            border-radius: 100px; border: 1px solid rgba(255, 204, 51, 0.2);
+            border-radius: 100px; border: 1px solid var(--border-glass);
             backdrop-filter: blur(10px); margin-bottom: 25px;
         }
 
@@ -90,31 +94,29 @@
         .btn-play {
             width: 60px; height: 60px; background: var(--neon-gold); color: black;
             border-radius: 50%; font-size: 1.3rem; 
-            box-shadow: 0 0 20px var(--neon-shadow);
+            box-shadow: 0 0 25px var(--neon-shadow);
             display: flex; align-items: center; justify-content: center;
         }
 
         .social-row { display: flex; gap: 15px; }
         .social-link {
             width: 38px; height: 38px; display: flex; align-items: center; justify-content: center;
-            color: var(--neon-gold); border-radius: 50%; border: 1px solid rgba(255, 204, 51, 0.15);
+            color: var(--neon-gold); border-radius: 50%; border: 1px solid var(--border-glass);
             text-decoration: none; transition: 0.3s;
         }
-        .social-link:hover { background: var(--neon-gold); color: black; }
+        .social-link:hover { background: var(--neon-gold); color: black; transform: translateY(-3px); }
 
         footer { 
-            width: 100%; text-align: center; padding: 20px; 
-            font-size: 0.6rem; opacity: 0.5; color: var(--neon-gold); 
+            width: 100%; text-align: center; padding: 25px 20px; 
+            font-size: 0.65rem; opacity: 0.6; color: var(--neon-gold); 
             letter-spacing: 2px; z-index: 10;
         }
 
-        /* --- AJUSTES PC (CENTRAR CONTROLES CON TÍTULO) --- */
         @media (min-width: 1024px) {
             .main-wrapper { flex-direction: row; gap: 100px; justify-content: center; }
             #radialCanvas { display: block; }
-            /* Alineamos todo a la izquierda para que visualmente se vea centrado con el bloque de texto */
             .content-section { align-items: flex-start; text-align: left; }
-            .info h1 { margin-left: -4px; } /* Ajuste óptico para el tracking del texto */
+            .info h1 { margin-left: -4px; } 
         }
     </style>
 </head>
@@ -150,7 +152,7 @@
         </div>
     </div>
 
-    <footer>&copy; 2026 AC MEDIA BROADCAST • </footer>
+    <footer>&copy; 2026 AC MEDIA BROADCAST</footer>
 
     <audio id="stream" crossorigin="anonymous" src="https://stream-162.zeno.fm/3rzep03457zuv"></audio>
 
@@ -167,7 +169,6 @@
         let init = false;
         let particles = [];
 
-        // --- Partículas ---
         function res() { 
             pCanv.width = window.innerWidth; 
             pCanv.height = window.innerHeight;
@@ -187,16 +188,15 @@
                 this.v = Math.random() * 0.3 + 0.1;
             }
             up() { this.y -= this.v; if(this.y<0) this.reset(); }
-            dr() { pCtx.fillStyle = "rgba(255,204,51,0.2)"; pCtx.beginPath(); pCtx.arc(this.x,this.y,this.s,0,Math.PI*2); pCtx.fill(); }
+            dr() { pCtx.fillStyle = "rgba(255,204,51,0.25)"; pCtx.beginPath(); pCtx.arc(this.x,this.y,this.s,0,Math.PI*2); pCtx.fill(); }
         }
         for(let i=0; i<60; i++) particles.push(new P());
 
-        // --- Lógica Principal ---
         playBtn.onclick = () => {
             if(!init) {
                 aCtx = new (window.AudioContext || window.webkitAudioContext)();
                 analyser = aCtx.createAnalyser();
-                analyser.fftSize = 128; // Menos datos para mayor rendimiento en móvil
+                analyser.fftSize = 128; 
                 src = aCtx.createMediaElementSource(audio);
                 src.connect(analyser);
                 analyser.connect(aCtx.destination);
@@ -205,12 +205,14 @@
                 res();
             }
             if(audio.paused) {
-                aCtx.resume(); audio.play();
+                if (aCtx.state === 'suspended') aCtx.resume();
+                audio.play();
                 playBtn.innerHTML = '<i class="fas fa-pause"></i>';
             } else {
                 audio.pause();
                 playBtn.innerHTML = '<i class="fas fa-play"></i>';
                 artContainer.style.boxShadow = "0 0 30px var(--neon-shadow)";
+                artContainer.style.transform = "scale(1)";
             }
         };
 
@@ -223,16 +225,14 @@
 
             analyser.getByteFrequencyData(data);
             
-            // --- Brillo dinámico de la carátula (Móvil y PC) ---
-            // Usamos las frecuencias bajas (índice 0-5) para el pulso
             let sum = 0;
             for(let i=0; i<5; i++) sum += data[i];
             let avg = sum / 5;
-            let pulse = (avg / 255) * 60; // Intensidad del brillo
-            artContainer.style.boxShadow = `0 0 ${20 + pulse}px ${pulse > 20 ? 'var(--neon-gold)' : 'var(--neon-shadow)'}`;
-            artContainer.style.transform = `scale(${1 + (pulse/500)})`;
+            let pulse = (avg / 255) * 50; 
+            
+            artContainer.style.boxShadow = `0 0 ${20 + pulse}px ${pulse > 25 ? 'var(--neon-gold)' : 'var(--neon-shadow)'}`;
+            artContainer.style.transform = `scale(${1 + (pulse/600)})`;
 
-            // --- Visualizador Radial (Solo PC) ---
             if(window.innerWidth >= 1024) {
                 rCtx.clearRect(0,0,rCanv.width,rCanv.height);
                 const c = rCanv.width/2;
@@ -242,7 +242,6 @@
                     const h = (data[i % 40] / 255) * 60;
                     rCtx.strokeStyle = `rgba(255,204,51,${0.2 + data[i%40]/255})`;
                     rCtx.lineWidth = 3;
-                    rCtx.lineCap = "round";
                     rCtx.beginPath();
                     rCtx.moveTo(c + Math.cos(ang)*rad, c + Math.sin(ang)*rad);
                     rCtx.lineTo(c + Math.cos(ang)*(rad+h), c + Math.sin(ang)*(rad+h));
