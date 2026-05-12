@@ -27,6 +27,21 @@
             display: flex; flex-direction: column;
         }
 
+        /* --- ANIMACIONES DE ENTRADA --- */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); filter: blur(5px); }
+            to { opacity: 1; transform: translateY(0); filter: blur(0); }
+        }
+
+        .reveal {
+            animation: fadeInUp 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+            opacity: 0;
+        }
+
+        .delay-1 { animation-delay: 0.3s; }
+        .delay-2 { animation-delay: 0.6s; }
+        .delay-3 { animation-delay: 0.9s; }
+
         #particleCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
 
         .main-wrapper {
@@ -65,7 +80,6 @@
             align-items: center; text-align: center; 
         }
 
-        /* TÍTULO EN BLANCO */
         .info h1 { 
             color: #ffffff; 
             font-weight: 900;
@@ -125,7 +139,7 @@
     <canvas id="particleCanvas"></canvas>
     
     <div class="main-wrapper">
-        <div class="visualizer-container">
+        <div class="visualizer-container reveal delay-1">
             <canvas id="radialCanvas"></canvas>
             <div class="cover-art" id="artContainer">
                 <img src="https://i.ibb.co/LDDxrrkg/MANA-iso.png" alt="MANÁ FM">
@@ -133,28 +147,29 @@
         </div>
 
         <div class="content-section">
-            <div class="info">
+            <div class="info reveal delay-2">
                 <h1>MANÁ FM</h1>
                 <p>ALIMENTANDO TU ESPIRITU</p>
             </div>
 
-            <div class="controls">
+            <div class="controls reveal delay-2">
                 <button class="btn" onclick="v(-0.1)">VOL －</button>
                 <button class="btn btn-play" id="playBtn"><i class="fas fa-play"></i></button>
                 <button class="btn" onclick="v(0.1)">VOL ＋</button>
             </div>
 
-            <div class="social-row">
+            <div class="social-row reveal delay-3">
                 <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
-                <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                <a href="https://www.instagram.com/manafmcol/" class="social-link"><i class="fab fa-instagram"></i></a>
                 <a href="#" class="social-link"><i class="fab fa-whatsapp"></i></a>
             </div>
         </div>
     </div>
 
-    <footer>
+    <footer class="reveal delay-3">
         <h1>CABIMAS-VENEZUELA</h1>
-        &copy; 2026 AC MEDIA BROADCAST</footer>
+        &copy; 2026 AC MEDIA BROADCAST
+    </footer>
 
     <audio id="stream" crossorigin="anonymous" src="https://stream-162.zeno.fm/3rzep03457zuv"></audio>
 
@@ -185,11 +200,21 @@
             constructor() { this.reset(); }
             reset() {
                 this.x = Math.random() * pCanv.width;
-                this.y = Math.random() * pCanv.height;
+                // Empieza en la parte superior (coordenada y negativa)
+                this.y = Math.random() * pCanv.height; 
                 this.s = Math.random() * 2;
+                // Velocidad de caída hacia abajo (v positiva)
                 this.v = Math.random() * 0.3 + 0.1;
             }
-            up() { this.y -= this.v; if(this.y<0) this.reset(); }
+            // Actualiza para caer (coordenada y aumenta)
+            update() { 
+                this.y += this.v; 
+                if(this.y > pCanv.height) {
+                    // Reaparece en la parte superior cuando sale por abajo
+                    this.y = -10;
+                    this.x = Math.random() * pCanv.width;
+                }
+            }
             dr() { pCtx.fillStyle = "rgba(255,204,51,0.25)"; pCtx.beginPath(); pCtx.arc(this.x,this.y,this.s,0,Math.PI*2); pCtx.fill(); }
         }
         for(let i=0; i<60; i++) particles.push(new P());
@@ -199,6 +224,7 @@
                 aCtx = new (window.AudioContext || window.webkitAudioContext)();
                 analyser = aCtx.createAnalyser();
                 analyser.fftSize = 128; 
+                analyser.smoothingTimeConstant = 0.8;
                 src = aCtx.createMediaElementSource(audio);
                 src.connect(analyser);
                 analyser.connect(aCtx.destination);
@@ -221,7 +247,7 @@
         function render() {
             requestAnimationFrame(render);
             pCtx.clearRect(0,0,pCanv.width,pCanv.height);
-            particles.forEach(p=>{ p.up(); p.dr(); });
+            particles.forEach(p=>{ p.update(); p.dr(); });
 
             if(!init || audio.paused) return;
 
